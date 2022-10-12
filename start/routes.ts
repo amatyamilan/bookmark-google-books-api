@@ -23,3 +23,9 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.get('/', async () => {
   return { hello: 'world' }
 })
+
+Route.group(() => {
+  Route.group(() => {
+    Route.post('/signup', 'AuthController.signup')
+  }).prefix('/auth')
+}).prefix('/api')
