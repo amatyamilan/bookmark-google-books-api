@@ -1,7 +1,8 @@
-import CreateUser from 'App/Validators/CreateUserValidator'
 import { inject } from '@adonisjs/fold'
-import UserService from 'App/Services/UserService'
 import Hash from '@ioc:Adonis/Core/Hash'
+
+import UserService from 'App/Services/UserService'
+import CreateUser from 'App/Validators/CreateUserValidator'
 
 @inject()
 export default class AuthController {

@@ -17,8 +17,9 @@ Route.group(() => {
    * Authenticated Routes
    */
   Route.group(() => {
-    Route.get('/test', () => {
-      return true
-    })
+    Route.group(() => {
+      Route.get('/search', 'BooksController.index')
+    }).prefix('/books')
   }).middleware('auth:api')
+
 }).prefix('/api')
