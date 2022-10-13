@@ -1,4 +1,3 @@
-// https://www.googleapis.com/books/v1/volumes?q=intitle:chronicles&key=AIzaSyDNx4AoLa6-yPFUEy2qYZgn-u8NzLmyIR0
 export interface BookResponse {
   kind: string
   id: string

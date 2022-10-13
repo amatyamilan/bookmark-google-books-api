@@ -34,4 +34,5 @@ export default Env.rules({
   REDIS_PASSWORD: Env.schema.string.optional(),
 
   GOOGLE_API_KEY: Env.schema.string(),
+  DEFAULT_PAGINATION_LIMIT: Env.schema.number(),
 })

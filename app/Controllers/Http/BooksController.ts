@@ -1,20 +1,26 @@
 import { inject } from '@adonisjs/core/build/standalone'
+
+import { PaginateParams } from 'App/DTOs/PaginationDTO'
 import { BookSearchFilterParams } from 'App/DTOs/FilterDTO'
 import { GoogleBooksService } from 'App/Services/GoogleBooksService'
+import BooksSearchValidator from 'App/Validators/BooksSearchValidator'
+import { defaultPaginationLimit } from 'Config/app'
 
 @inject()
 export default class BooksController {
   constructor(private googleBooksService: GoogleBooksService) {}
 
   public async index({ request }) {
-    const filters: BookSearchFilterParams = request.only([
-      'title',
-      'author',
-      'keyword',
-      'page',
-      'limit',
-    ])
+    await request.validate(BooksSearchValidator)
+    const filters: BookSearchFilterParams = request.only(['title', 'author', 'keyword'])
 
-    return await this.googleBooksService.search(filters)
+    let paginationParams: PaginateParams = {
+      page: request.input('page', 1),
+      limit: request.input('limit', defaultPaginationLimit),
+    }
+
+    const booksData = await this.googleBooksService.search(filters, paginationParams)
+
+    return { books: booksData.books, meta: booksData.paginationMeta }
   }
 }
