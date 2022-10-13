@@ -13,13 +13,16 @@ Route.group(() => {
     Route.post('/signin', 'AuthController.signin')
   }).prefix('/auth')
 
+  Route.group(() => {
+    Route.get('/search', 'BooksController.index')
+  }).prefix('/books')
+
   /**
    * Authenticated Routes
    */
   Route.group(() => {
-    Route.group(() => {
-      Route.get('/search', 'BooksController.index')
-    }).prefix('/books')
+    Route.get('/test', () => {
+      return true
+    })
   }).middleware('auth:api')
-
 }).prefix('/api')

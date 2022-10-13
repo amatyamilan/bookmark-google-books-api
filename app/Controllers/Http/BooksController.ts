@@ -1,10 +1,10 @@
 import { inject } from '@adonisjs/core/build/standalone'
 
+import { defaultPaginationLimit } from 'Config/app'
 import { PaginateParams } from 'App/DTOs/PaginationDTO'
 import { BookSearchFilterParams } from 'App/DTOs/FilterDTO'
 import { GoogleBooksService } from 'App/Services/GoogleBooksService'
 import BooksSearchValidator from 'App/Validators/BooksSearchValidator'
-import { defaultPaginationLimit } from 'Config/app'
 
 @inject()
 export default class BooksController {
