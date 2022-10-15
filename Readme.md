@@ -9,7 +9,6 @@ cp .env .env.example
 ```
 
 ### Environment Variables
-Add required template names in resources/templates/deploy_templates.txt, example:
 
 | Variable Name | Description |
 | ------ | ------ |
