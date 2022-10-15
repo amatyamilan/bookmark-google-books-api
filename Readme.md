@@ -27,7 +27,7 @@ cp .env .env.example
 | REDIS_PORT | Redis port |
 | REDIS_PASSWORD | Redis password |
 | GOOGLE_API_KEY | Google books api key |
-| PAGINATION_LIMIT | Application Pagination Limit | 
+| PAGINATION_LIMIT | Application Pagination Limit, maximum allowable value is 40 for google search API. |
 
 
 ### Run application
