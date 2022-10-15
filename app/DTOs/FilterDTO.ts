@@ -1,7 +1,7 @@
 export interface BookSearchFilterParams {
-  title?: string
-  author?: string
-  keyword?: string
-  page?: number
-  offset?: number
+  readonly title?: string
+  readonly author?: string
+  readonly keyword?: string
+  readonly page?: number
+  readonly offset?: number
 }

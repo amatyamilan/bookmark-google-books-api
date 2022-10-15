@@ -12,7 +12,7 @@ export class GoogleBooksService implements BooksAPIInterface {
   public async search(
     filters: BookSearchFilterParams,
     paginationParams: PaginateParams
-  ): Promise<{ books: BookResponse[]; paginationMeta: PaginationMeta }> {
+  ): Promise<{ data: BookResponse[]; paginationMeta: PaginationMeta }> {
     let searchQuery = ''
 
     if (filters.keyword) {
@@ -27,7 +27,7 @@ export class GoogleBooksService implements BooksAPIInterface {
       searchQuery += `inauthor:${filters.author}`
     }
 
-    const pagination = new Pagination(paginationParams.page, paginationParams.limit || 40)
+    const pagination = new Pagination(paginationParams.page, paginationParams.limit || 40, filters)
     const startIndex = pagination.getOffset()
 
     try {
@@ -41,9 +41,9 @@ export class GoogleBooksService implements BooksAPIInterface {
       })
 
       const paginationMeta: PaginationMeta = pagination.getPageNos(booksResponse.data.totalItems)
-      const books: BookResponse[] = booksResponse.data.items
+      const data: BookResponse[] = booksResponse.data.items
 
-      return { books, paginationMeta }
+      return { data, paginationMeta }
     } catch (searchError) {
       console.error('Error while searching books')
 

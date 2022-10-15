@@ -1,9 +1,5 @@
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
-
 Route.group(() => {
   /**
    * Unuthenticated Routes
@@ -21,8 +17,12 @@ Route.group(() => {
    * Authenticated Routes
    */
   Route.group(() => {
-    Route.get('/test', () => {
-      return true
-    })
+    Route.group(() => {
+      Route.group(() => {
+        Route.get('/', 'UserBookmarksController.index')
+        Route.post('/create', 'UserBookmarksController.store')
+        Route.delete('/:bookmarkApiId', 'UserBookmarksController.destroy')
+      }).prefix('bookmarks')
+    }).prefix('/users')
   }).middleware('auth:api')
 }).prefix('/api')

@@ -1,16 +1,17 @@
 type Nullable<T> = T | null
 
 export interface PaginateParams {
-  page: number
-  limit?: number
+  readonly page: number
+  readonly limit?: number
 }
-
 export interface PaginationMeta {
-  offset: number
-  self: number
-  first: number
-  last: number
-  next: Nullable<number>
-  previous: Nullable<number>
-  count: number
+  total: number
+  perPage: number
+  currentPage: number
+  lastPage: number
+  firstPage: number
+  firstPageUrl: string
+  lastPageUrl: string
+  nextPageUrl: Nullable<string>
+  previousPageUrl: Nullable<string>
 }

@@ -21,6 +21,6 @@ export default class BooksController {
 
     const booksData = await this.googleBooksService.search(filters, paginationParams)
 
-    return { books: booksData.books, meta: booksData.paginationMeta }
+    return { data: booksData.data, meta: booksData.paginationMeta }
   }
 }
