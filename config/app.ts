@@ -27,7 +27,7 @@ import { ValidatorConfig } from '@ioc:Adonis/Core/Validator'
 */
 export const appKey: string = Env.get('APP_KEY')
 export const googleBooksApiKey: string = Env.get('GOOGLE_API_KEY')
-export const defaultPaginationLimit: number = Env.get('DEFAULT_PAGINATION_LIMIT', 20)
+export const paginationLimit: number = Env.get('PAGINATION_LIMIT', 20)
 
 /*
 |--------------------------------------------------------------------------
