@@ -8,6 +8,9 @@ export default class UserBookmark extends BaseModel {
   @column({ isPrimary: true })
   public booksApiId: string
 
+  @column()
+  public extraInformation: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

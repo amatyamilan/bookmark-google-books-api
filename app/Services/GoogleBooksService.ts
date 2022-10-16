@@ -1,11 +1,13 @@
 import axios from 'axios'
+import { inject, Response } from '@adonisjs/core/build/standalone'
+
+import { googleBooksApiKey } from 'Config/app'
 import { BookResponse } from 'App/DTOs/BookDTO'
+import Pagination from 'App/Helpers/PaginationHelper'
 import { BookSearchFilterParams } from 'App/DTOs/FilterDTO'
 import BooksAPIInterface from 'Contracts/interfaces/BooksAPI.interface'
-import { inject } from '@adonisjs/core/build/standalone'
-import { googleBooksApiKey } from 'Config/app'
 import { PaginateParams, PaginationMeta } from 'App/DTOs/PaginationDTO'
-import Pagination from 'App/Helpers/PaginationHelper'
+import Redis from '@ioc:Adonis/Addons/Redis'
 
 @inject()
 export class GoogleBooksService implements BooksAPIInterface {
@@ -30,20 +32,52 @@ export class GoogleBooksService implements BooksAPIInterface {
     const pagination = new Pagination(paginationParams.page, paginationParams.limit || 40, filters)
     const startIndex = pagination.getOffset()
 
+    const bookSearchParams = {
+      q: searchQuery,
+      key: googleBooksApiKey,
+      maxResults: paginationParams.limit,
+      startIndex,
+    }
+
     try {
+      const base64EncodedBooksSearchParms = Buffer.from(JSON.stringify(bookSearchParams)).toString(
+        'base64'
+      )
+
+      const redisBooksResponse = await Redis.get(base64EncodedBooksSearchParms)
+      if (redisBooksResponse) {
+        return JSON.parse(redisBooksResponse)
+      }
+
       const booksResponse = await axios.get('https://www.googleapis.com/books/v1/volumes', {
-        params: {
-          q: searchQuery,
-          key: googleBooksApiKey,
-          maxResults: paginationParams.limit,
-          startIndex,
-        },
+        params: bookSearchParams,
       })
 
       const paginationMeta: PaginationMeta = pagination.getPageNos(booksResponse.data.totalItems)
       const data: BookResponse[] = booksResponse.data.items
+      const response = { data, paginationMeta }
+
+      Redis.setex(base64EncodedBooksSearchParms, 1800, JSON.stringify(response))
 
       return { data, paginationMeta }
+    } catch (searchError) {
+      console.error('Error while searching books')
+
+      throw searchError
+    }
+  }
+
+  public async getBookDetails(bookApiId: string): Promise<BookResponse> {
+    try {
+      const bookResponse = await axios.get(
+        `https://www.googleapis.com/books/v1/volumes/${bookApiId}`,
+        {
+          params: {
+            key: googleBooksApiKey,
+          },
+        }
+      )
+      return bookResponse.data
     } catch (searchError) {
       console.error('Error while searching books')
 

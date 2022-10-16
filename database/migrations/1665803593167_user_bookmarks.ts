@@ -8,6 +8,7 @@ export default class extends BaseSchema {
       table.string('books_api_id', 20)
       table.integer('user_id')
       table.primary(['user_id', 'books_api_id'])
+      table.jsonb('extra_information')
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

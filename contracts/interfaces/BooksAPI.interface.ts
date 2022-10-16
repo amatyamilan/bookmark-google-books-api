@@ -7,4 +7,6 @@ export default interface BooksAPIInterface {
     filters: BookSearchFilterParams,
     paginationParams: PaginateParams
   ): Promise<{ data: BookResponse[]; paginationMeta: PaginationMeta }>
+
+  getBookDetails(bookApiId: string): Promise<BookResponse>
 }

@@ -1,29 +1,21 @@
 import { inject } from '@adonisjs/core/build/standalone'
 import { ModelPaginatorContract } from '@ioc:Adonis/Lucid/Orm'
+
 import UserBookmark from 'App/Models/UserBookmark'
+import { PaginateParams } from 'App/DTOs/PaginationDTO'
+import { GoogleBooksService } from './GoogleBooksService'
 import UserBookmarkInterface from 'Contracts/interfaces/UserBookmark.interface'
 
 @inject()
 export default class UserBookmarkService implements UserBookmarkInterface {
-  public async getUserBookmarks(userId: number): Promise<ModelPaginatorContract<UserBookmark>> {
+  public async getUserBookmarks(
+    userId: number,
+    paginationParams: PaginateParams
+  ): Promise<ModelPaginatorContract<UserBookmark>> {
     try {
-      const userBookmarks = await UserBookmark.query().where('userId', userId).paginate(1, 10)
-
-      userBookmarks.namingStrategy = {
-        paginationMetaKeys() {
-          return {
-            total: 'total',
-            perPage: 'perPage',
-            currentPage: 'currentPage',
-            lastPage: 'lastPage',
-            firstPage: 'firstPage',
-            firstPageUrl: 'firstPageUrl',
-            lastPageUrl: 'lastPageUrl',
-            nextPageUrl: 'nextPageUrl',
-            previousPageUrl: 'previousPageUrl',
-          }
-        },
-      }
+      const userBookmarks = await UserBookmark.query()
+        .where('userId', userId)
+        .paginate(paginationParams.page, paginationParams.limit)
 
       return userBookmarks
     } catch (getUserBookmarksError) {
@@ -46,7 +38,12 @@ export default class UserBookmarkService implements UserBookmarkInterface {
 
   public async createBookmark(userId: number, booksApiId: string): Promise<UserBookmark> {
     try {
-      return await UserBookmark.create({ userId, booksApiId })
+      const exptraInformation = await new GoogleBooksService().getBookDetails(booksApiId)
+      return await UserBookmark.create({
+        userId,
+        booksApiId,
+        extraInformation: JSON.stringify(exptraInformation),
+      })
     } catch (createBookmarkError) {
       console.error('Error while creating bookmark', createBookmarkError.message)
 
