@@ -69,6 +69,13 @@ export class GoogleBooksService implements BooksAPIInterface {
 
   public async getBookDetails(bookApiId: string): Promise<BookResponse> {
     try {
+      const redisBookeKey = `books:${bookApiId}`
+      const redisBooksResponse = await Redis.get(redisBookeKey)
+
+      if (redisBooksResponse) {
+        return JSON.parse(redisBooksResponse)
+      }
+
       const bookResponse = await axios.get(
         `https://www.googleapis.com/books/v1/volumes/${bookApiId}`,
         {
@@ -77,6 +84,8 @@ export class GoogleBooksService implements BooksAPIInterface {
           },
         }
       )
+      Redis.setex(redisBookeKey, 1800, JSON.stringify(bookResponse.data))
+
       return bookResponse.data
     } catch (searchError) {
       console.error('Error while searching books')

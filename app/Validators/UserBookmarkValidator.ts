@@ -5,10 +5,10 @@ export default class UserBookmarkValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
-    bookmarkApiId: schema.string({ trim: true }),
+    booksApiId: schema.string({ trim: true }),
   })
 
   public messages: CustomMessages = {
-    'bookmarkApiId.required': 'Bookmark API id is required.',
+    'booksApiId.required': 'Books API id is required.',
   }
 }

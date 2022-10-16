@@ -1,6 +1,7 @@
 import { inject } from '@adonisjs/core/build/standalone'
 import { STATUSES } from 'App/constants/responseCodes.status'
 import { PaginateParams } from 'App/DTOs/PaginationDTO'
+import { GoogleBooksService } from 'App/Services/GoogleBooksService'
 import UserBookmarkService from 'App/Services/UserBookmarkService'
 import UserBookmarkValidator from 'App/Validators/UserBookmarkValidator'
 import { paginationLimit } from 'Config/app'
@@ -26,10 +27,18 @@ export default class UserBookmarksController {
 
     const userInfo = auth.use('api').user
     const { id: userId } = userInfo
+    const booksApiId = request.input('booksApiId')
 
-    const bookmarkApiId = request.input('bookmarkApiId')
+    try {
+      await new GoogleBooksService().getBookDetails(booksApiId)
+    } catch (error) {
+      return response.status(STATUSES.ERROR_NOT_FOUND_EXCEPTION).send({
+        message: 'Invalid books api id',
+      })
+    }
+
     const userBookmarkExists = await this.userBookmarkService.checkIfBookmarksExists(userId, [
-      bookmarkApiId,
+      booksApiId,
     ])
 
     if (userBookmarkExists.length) {
@@ -37,7 +46,7 @@ export default class UserBookmarksController {
         message: 'Bookmark already exists.',
       })
     }
-    const userBookmark = await this.userBookmarkService.createBookmark(userId, bookmarkApiId)
+    const userBookmark = await this.userBookmarkService.createBookmark(userId, booksApiId)
     userBookmark.extraInformation = JSON.parse(userBookmark.extraInformation)
 
     return response.status(STATUSES.STATUS_OK).send({
